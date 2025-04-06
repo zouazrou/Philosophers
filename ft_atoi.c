@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zouazrou <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/26 10:35:27 by zouazrou          #+#    #+#             */
-/*   Updated: 2024/10/27 14:53:47 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/04/06 15:58:03 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	ft_atoi(const char *nptr)
 	nb = 0;
 	while ((nptr[i] >= 9 && nptr[i] <= 13) || (nptr[i] == 32))
 		i++;
-	
+
 	if (nptr[i] == '-' || nptr[i] == '+')
 	{
 		if (nptr[i] == '-')
@@ -60,6 +60,16 @@ int	ft_usleep(size_t milliseconds)
 
 	start = get_current_time();
 	while ((get_current_time() - start) < milliseconds)
-		usleep(500);
+		usleep(333);
 	return (0);
+}
+
+void	destroy_all_resource(data_t	*arg)
+{
+	// int	i;
+
+	// i = -1;
+	free(arg->ph);
+	arg->ph = NULL;
+
 }

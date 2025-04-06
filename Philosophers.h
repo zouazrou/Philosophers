@@ -30,6 +30,7 @@ typedef struct      mutex_s
 
 typedef struct      ph_s
 {
+	long			last_meal;
     pthread_t       th;
     mutex_t         fork;
     bool            flag;
@@ -46,10 +47,12 @@ typedef struct      data_s
     bool            start;    // ok
     struct timeval  s_time;// ok
     ph_t            *ph;
+	bool			stop;
 }                   data_t;
 
 // utils
 int     ft_atoi(const char *nptr);
+void	destroy_all_resource(data_t	*arg);
 
 int     ft_usleep(size_t milliseconds);
 // main functions
