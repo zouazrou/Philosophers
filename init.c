@@ -35,9 +35,13 @@ void	init_arg(data_t *arg)
 	i = -1;
     while (++i < arg->num_ph)
 	{
-		arg->ph[i].l_fork = &arg->forks[(i-1) % arg->num_ph];
-		printf("ph[%d] l = d\n", i, (int)(i-1) % arg->num_ph);
-		arg->ph[i].r_fork = &arg->forks[i % arg->num_ph];
-		printf("ph[%d] r = d\n", i, (int)i %  arg->num_ph);
+		arg->ph[i].r_fork = &arg->forks[(i+1) % arg->num_ph];
+		arg->ph[i].l_fork = &arg->forks[i % arg->num_ph];
+		printf("ph [%d] l = %d\n", i, i %  arg->num_ph);
+		printf("ph [%d] r = %d\n", i, (i+1) % arg->num_ph);
+		// arg->ph[i].l_fork = &arg->forks[(i-1) % arg->num_ph];
+		// arg->ph[i].r_fork = &arg->forks[i % arg->num_ph];
+		// printf("ph [%d] l = %d\n", i, (i-1) % arg->num_ph);
+		// printf("ph [%d] r = %d\n", i, i %  arg->num_ph);
 	}
 }

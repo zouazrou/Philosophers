@@ -3,7 +3,7 @@ CC = cc
 # -Wall -Wextra -Werror -fsanitize=thread
 CFLAGS = -g -pthread -Wall -Wextra -Werror
 
-SRC = init_handling_errs.c main.c ft_atoi.c
+SRC = init.c main.c ft_atoi_plus.c
 
 OBJ = $(SRC:.c=.o)
 

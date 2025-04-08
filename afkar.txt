@@ -2,3 +2,8 @@
 (l_fork(*)  o  (*)r_fork) (l_fork(*)  o  (*)r_fork) (l_fork(*)  o  (*)r_fork)
         |       |                 |       |                 |       |
 >_______|       |_________________|       |_________________|       |_______>
+
+
+-> usleep problem
+-> deadlock problem
+
