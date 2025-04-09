@@ -50,7 +50,7 @@ long long	get_current_time(void)
 
 	if (gettimeofday(&time, NULL) == -1)
 		write(2, "Error : gettimeofday\n", 22);
-	return (time.tv_sec * 1000 + time.tv_usec / 1000);
+	return ((time.tv_sec * 1000 + time.tv_usec / 1000));
 }
 
 long long	get_time_difference(data_t *data)
