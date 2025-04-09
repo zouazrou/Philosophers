@@ -3,13 +3,13 @@ CC = cc
 # -Wall -Wextra -Werror -fsanitize=thread
 CFLAGS = -g -pthread -Wall -Wextra -Werror
 
-SRC = init.c main.c ft_atoi_plus.c
+SRC = init.c main.c utils.c
 
 OBJ = $(SRC:.c=.o)
 
 NAME = philo
 
-ARG = 2467 7000 500 10999
+ARG = 2 400 100 100
 
 all : $(NAME)
 
@@ -17,7 +17,7 @@ $(NAME) : $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
 run : $(NAME)
-	clear ; ./$(NAME) $(ARG)
+	clear ; valgrind --tool=helgrind ./$(NAME) $(ARG)
 clean :
 	rm -f $(OBJ)
 

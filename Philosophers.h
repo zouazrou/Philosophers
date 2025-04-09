@@ -11,14 +11,15 @@
 
 #define	UNAVAILABLE -42
 
-typedef struct      ph_s
+typedef struct      philo_s
 {
-	int				id;
-	pthread_t       th;
-	long long		last_meal;
-    pthread_mutex_t         *r_fork;
-    pthread_mutex_t         *l_fork;
-}                   ph_t;
+	int				id;					// ok
+	pthread_t       th;					// ok
+	long long		last_meal;			// ok
+    pthread_mutex_t	*r_fork;			// ok
+    pthread_mutex_t	*l_fork;			// ok
+	void			*data;				// ok TYPE data_t
+}                   philo_t;
 
 typedef struct      data_s
 {
@@ -28,19 +29,20 @@ typedef struct      data_s
     long long		t_sleep;  			// ok
     int				nb_meals;  			// ok
     long long		start_time;
-    ph_t            *ph;				// ok
+	pthread_mutex_t	write;  			// ok
+    philo_t			*ph;				// ok
 	pthread_mutex_t	*forks;				// ok
-    bool            simulation_start;
-	bool			simulation_stop;
-}                   data_t;
+	bool			simulation_stop;	// ok
+}					data_t;
 
 // utils
 long long	ft_atoi_plus(const char *nptr);
-long		timedifference_msec(data_t *data);
-void		clean_all_resource(data_t	*arg);
+long long	get_current_time(void);
+long long	get_time_difference(data_t *data);
+void		clean_all_resource(data_t	*data);
 
 // main functions
-void		handling_input(data_t *phs, int ac, char **av);
-void		init_arg(data_t *arg);
+void		handling_input(data_t *data, int ac, char **av);
+void		init_arg(data_t *data);
 
 #endif
