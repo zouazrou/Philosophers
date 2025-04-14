@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/14 14:15:08 by zouazrou          #+#    #+#             */
+/*   Updated: 2025/04/14 14:26:02 by zouazrou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "Philosophers.h"
 
 void	handling_input(data_t *arg, int ac, char **av)
@@ -27,7 +39,8 @@ void	init_arg(data_t *data)
 	if (!data->ph || !data->forks)
 		exit((write(2, "Error : malloc\n", 16), 1));
 	data->simulation_stop = false;
-	pthread_mutex_init(&data->write, NULL);
+	pthread_mutex_init(&data->display, NULL);
+	pthread_mutex_init(&data->simulation_mutex, NULL);
 	// initualize philo_t struct
 	i = -1;
 	while (++i < data->num_ph)
@@ -38,6 +51,8 @@ void	init_arg(data_t *data)
 		data->ph[i].l_fork = &data->forks[i % data->num_ph];
 		data->ph[i].id = i + 1;
 		data->ph[i].data = data;
+		data->ph[i].last_meal = 0;
+        pthread_mutex_init(&data->ph[i].meal_mutex, NULL);
 		// printf("ph [%d] l = %d\n", data->ph[i].id, i %  data->num_ph);
 		// printf("ph [%d] r = %d\n", data->ph[i].id, (i+1) % data->num_ph);
 	}

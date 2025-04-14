@@ -3,13 +3,13 @@ CC = cc
 # -Wall -Wextra -Werror -fsanitize=thread
 CFLAGS = -g -pthread -Wall -Wextra -Werror
 
-SRC = init.c main.c utils.c
+SRC = init.c main.c utils.c observer.c
 
 OBJ = $(SRC:.c=.o)
 
 NAME = philo
 
-ARG = 2 400 100 100
+ARG = 2 300 200 200
 
 all : $(NAME)
 
