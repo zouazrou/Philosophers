@@ -6,7 +6,7 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:15:04 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/04/14 14:21:51 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/04/15 10:18:32 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,9 @@
 #include <stdbool.h>
 
 #define	UNAVAILABLE -42
+#define	MS 1000
+
+typedef struct data_s data_t;
 
 typedef struct      philo_s
 {
@@ -31,8 +34,7 @@ typedef struct      philo_s
 	pthread_mutex_t	meal_mutex;			// ok
     pthread_mutex_t	*r_fork;			// ok
     pthread_mutex_t	*l_fork;			// ok
-	void			*data;				// ok TYPE data_t
-	bool			precedence;
+	data_t			*data;				// ok   search
 }                   philo_t;
 
 typedef struct      data_s
@@ -52,8 +54,8 @@ typedef struct      data_s
 
 // utils
 long long	ft_atoi_plus(const char *nptr);
-long long	get_current_time(void);
-long long	get_time_difference(data_t *data);
+long long	get_time(void);
+long long	time_simulation(void);
 void		display(char *str, philo_t *philo);
 void		clean_all_resource(data_t	*data);
 void		observer(data_t	*data);

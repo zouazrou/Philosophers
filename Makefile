@@ -18,6 +18,7 @@ $(NAME) : $(OBJ)
 
 run : $(NAME)
 	clear ; valgrind --tool=helgrind ./$(NAME) $(ARG)
+
 clean :
 	rm -f $(OBJ)
 

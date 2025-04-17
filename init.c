@@ -6,7 +6,7 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:15:08 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/04/14 14:26:02 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/04/15 09:13:39 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ void	handling_input(data_t *arg, int ac, char **av)
 	}
 	memset(arg, 0, sizeof(data_t));
 	arg->num_ph = ft_atoi_plus(av[1]);
-    arg->t_die = ft_atoi_plus(av[2]) * 1000;
-    arg->t_eat = ft_atoi_plus(av[3]) * 1000;
-    arg->t_sleep = ft_atoi_plus(av[4]) * 1000;
+    arg->t_die = ft_atoi_plus(av[2]);
+    arg->t_eat = ft_atoi_plus(av[3]);
+    arg->t_sleep = ft_atoi_plus(av[4]);
     arg->nb_meals = UNAVAILABLE;
 	if (ac == 6)
 		arg->nb_meals = ft_atoi_plus(av[5]);

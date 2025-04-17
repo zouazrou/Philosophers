@@ -6,7 +6,7 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:15:28 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/04/14 14:15:58 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/04/15 19:57:45 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,22 @@
 
 void	display(char *str, philo_t *philo)
 {
-	data_t	*data;
+	data_t		*data;
+	static bool	one_isdie;
 
 	data = philo->data;
 	pthread_mutex_lock(&data->display);
-	printf("%lld %d %s\n", get_time_difference(data), philo->id, str);
+	if (one_isdie == true)
+	{
+		pthread_mutex_unlock(&data->display);
+		return ;
+	}
+	printf("%lld %d %s\n", time_simulation(), philo->id, str);
+	if (*str == 'd')
+		one_isdie = true;
 	pthread_mutex_unlock(&data->display);
 }
+
 int	ft_isdigit(int c)
 {
 	if (c >= '0' && c <= '9')
@@ -53,7 +62,9 @@ long long	ft_atoi_plus(const char *nptr)
 
 // to convert from s to ms : * 1000
 // to convert from s to ms : / 1000
-long long	get_current_time(void)
+
+// return time (ms)
+long long	get_time(void)
 {
 	struct timeval	time;
 
@@ -62,12 +73,20 @@ long long	get_current_time(void)
 	return ((time.tv_sec * 1000 + time.tv_usec / 1000));
 }
 
-long long	get_time_difference(data_t *data)
+long long	time_simulation(void)
 {
-	long long	curr;
+	static long long	start_time;
+	long long			curr;
 
-	curr = get_current_time();
-	return (curr - data->start_time);
+	if (!start_time)
+	{
+		start_time = get_time();
+		printf("simulation begin at %lld(ms)\n", start_time);
+		return (-1);
+	}
+
+	curr = get_time();
+	return (curr - start_time);
 }
 
 void	clean_all_resource(data_t *data)
