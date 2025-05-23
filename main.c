@@ -17,8 +17,6 @@ void	sleeping(philo_t *philo)
 {
 	display("is sleeping", philo);
 	usleep(philo->data->t_sleep * MS);
-	display("is thinking", philo);
-
 }
 
 // void    sleeping(data_t *data, int id)
@@ -39,9 +37,8 @@ int    eating(philo_t *philo)
     return (0);
 }
 
-void	use_left_hand_first(philo_t *philo)
+void	use_left(philo_t *philo)
 {
-	usleep(100);
 	pthread_mutex_lock(philo->l_fork);
 	display("has taken a fork", philo);
 	pthread_mutex_lock(philo->r_fork);
@@ -49,10 +46,9 @@ void	use_left_hand_first(philo_t *philo)
 	eating(philo);
 	pthread_mutex_unlock(philo->r_fork);
 	pthread_mutex_unlock(philo->l_fork);
-	sleeping(philo);
 }
 
-void	use_right_hand_first(philo_t *philo)
+void	use_right(philo_t *philo)
 {
 	pthread_mutex_lock(philo->r_fork);
 	display("has taken a fork", philo);
@@ -61,46 +57,54 @@ void	use_right_hand_first(philo_t *philo)
 	eating(philo);
 	pthread_mutex_unlock(philo->l_fork);
 	pthread_mutex_unlock(philo->r_fork);
-	sleeping(philo);
 }
 
-// 1 2 3 4 5
+//
 void    *philosopher_life(void *arg)
 {
 	philo_t	*philo;
 
 	philo = (philo_t *)arg;
-	display("is thinking", philo);
-	pthread_mutex_lock(&philo->data->simulation_mutex);
-	while (philo->data->simulation_stop == false)
+	// display("is thinking", philo);
+	while (simulation_stop(philo->data) == false)
 	{
-		pthread_mutex_unlock(&philo->data->simulation_mutex);
-		if (is_odd(philo->id))
-			use_right_hand_first(philo);
+		// Eating
+		if (IS_ODD(philo->id))
+			use_right(philo);
 		else
-			use_left_hand_first(philo);
-		pthread_mutex_lock(&philo->data->simulation_mutex);
+			use_left(philo);
+
+		// Sleeping
+		sleeping(philo);
+
+		// thinking
+		display("is thinking", philo);
 	}
-	pthread_mutex_unlock(&philo->data->simulation_mutex);
 	return (NULL);
 }
 
-int	main(int ac, char *av[])
+int		main(int ac, char *av[])
 {
-	data_t	data;
-	int		i;
+	int			i;
+	data_t		data;
+	pthread_t	*thread_ids;
 
-	handling_input(&data, ac, av);
-	init_arg(&data);
+	handling_args(&data, &thread_ids, ac, av);
+		fprintf(stderr, "handling_args\n");
+	allocate_initial(&data);
+		fprintf(stderr, "allocate_initial\n");
 	i = -1;
 	time_simulation();
 	while (++i < data.num_ph)
-		pthread_create(&data.ph[i].th, NULL, philosopher_life, &data.ph[i]);
+	{
+		pthread_create(thread_ids + i, NULL, philosopher_life, &data.philosopher[i]);
+	}
+	// observer(&data);
 	i = -1;
-	observer(&data);
 	while (++i < data.num_ph)
-		pthread_join(data.ph[i].th, NULL);
-	clean_all_resource(&data);
+		pthread_join(thread_ids[i], NULL);
+	clean_all_resource(&data, &thread_ids);
+		fprintf(stderr, "clean all resource\n");
 	return (0);
 }
 // 0 - 0 = 0 > 200

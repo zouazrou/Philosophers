@@ -1,9 +1,9 @@
 CC = cc
 # valgrind --tool=helgrind ./philo 2 450 200 200
 # -Wall -Wextra -Werror -fsanitize=thread
-CFLAGS = -g -pthread -Wall -Wextra -Werror
+CFLAGS = -g -pthread -Wall -Wextra
 
-SRC = init.c main.c utils.c observer.c
+SRC = init.c main.c utils.c observer.c conditions.c
 
 OBJ = $(SRC:.c=.o)
 

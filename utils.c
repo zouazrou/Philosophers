@@ -60,49 +60,61 @@ long long	ft_atoi_plus(const char *nptr)
 	return (nb);
 }
 
-// to convert from s to ms : * 1000
-// to convert from s to ms : / 1000
-
-// return time (ms)
-long long	get_time(void)
+ms_t	get_time(void)
 {
 	struct timeval	time;
 
 	if (gettimeofday(&time, NULL) == -1)
 		exit (2);
-	return ((time.tv_sec * 1000 + time.tv_usec / 1000));
+	return ((ms_t)(time.tv_sec * 1000 + time.tv_usec / 1000));
 }
 
-long long	time_simulation(void)
+ms_t	time_simulation(void)
 {
-	static long long	start_time;
-	long long			curr;
+	ms_t		curr_time;
+	static ms_t	start_time;
 
 	if (!start_time)
 	{
 		start_time = get_time();
-		printf("simulation begin at %lld(ms)\n", start_time);
-		return (-1);
+		printf("simulation begin at %lld ms\n", start_time);
+		return (0);
 	}
-
-	curr = get_time();
-	return (curr - start_time);
+	curr_time = get_time();
+	return (curr_time - start_time);
 }
 
-void	clean_all_resource(data_t *data)
+void	clean_all_resource(data_t *data, pthread_t **ids)
 {
 	int	i;
 
 	i = -1;
+	// free array of id threads
+	if (*ids)
+	{
+		free(*ids);
+		*ids = NULL;
+	}
+	// destroy every mutex inside data_t struct and forks
 	while (++i < data->num_ph)
 	{
-		pthread_mutex_destroy(&data->ph[i].meal_mutex);
+		pthread_mutex_destroy(&data->philosopher[i].meal_mutex);
 		pthread_mutex_destroy(&data->forks[i]);
+		if (data->philosopher[i].l_fork)
+			pthread_mutex_destroy(data->philosopher[i].l_fork);
+		if (data->philosopher[i].r_fork)
+			pthread_mutex_destroy(data->philosopher[i].r_fork);
 	}
-	free(data->forks);
-	data->forks = NULL;
-	free(data->ph);
-	data->ph = NULL;
+	if (data->forks)
+	{
+		free(data->forks);
+		data->forks = NULL;
+	}
+	if (data->philosopher)
+	{
+		free(data->philosopher);
+		data->philosopher = NULL;
+	}
 	pthread_mutex_destroy(&data->simulation_mutex);
 }
 
