@@ -6,7 +6,7 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:15:08 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/05/30 23:12:13 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/03 09:11:10 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,18 +37,13 @@ void	allocate_initial(data_t *data)
 {
 	int	i;
 
-	// fprintf(stderr, "allocate_initial\n");
-	// allocation memory
 	data->philosopher = malloc(data->num_ph * sizeof(philo_t));
 	data->forks = 		malloc(data->num_ph * sizeof(pthread_mutex_t));
 	if (!data->philosopher || !data->forks)
 		exit((ft_putendl_fd("Error : malloc", 2), 1)); // free all *
-
-	// initualazation struct
 	data->simulation = false;
 	pthread_mutex_init(&data->simulation_mutex, NULL); // (2)
 	pthread_mutex_init(&data->display, NULL); // (4)
-
 	i = -1;
 	while (++i < data->num_ph)
     {
@@ -57,7 +52,6 @@ void	allocate_initial(data_t *data)
         if (pthread_mutex_init(&(data->philosopher + i)->meal_mutex, NULL))
 			printf("Error init 2\n");
 	}
-
 	i = -1;
 	while (++i < data->num_ph)
     {

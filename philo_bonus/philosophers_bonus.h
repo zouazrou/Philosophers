@@ -1,71 +1,64 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Philosophers.h                                     :+:      :+:    :+:   */
+/*   philosophers_bonus.h                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:15:04 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/03 09:12:30 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/03 22:12:44 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILOSOPHERS_H
-# define PHILOSOPHERS_H
+#ifndef PHILOSOPHERS_BONUS_H
+# define PHILOSOPHERS_BONUS_H
 
-#include <pthread.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <sys/wait.h>
+#include <semaphore.h>
 #include <stdbool.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define	UNAVAILABLE -42
 #define	US 1000
 
+/*---Semaphore Names---*/
+#define	SEM_FORKS "/forks"
+#define	SEM_STOP  "/stop"
+
 typedef long long ms_t;
-// Like prototype funtion
-typedef struct data_s data_t;
+
+typedef struct      data_s
+{
+	int				num_ph;	//ok
+	ms_t			t_die; // ok
+	ms_t			t_eat; // ok
+	ms_t			t_sleep; // ok
+	int				n_times_eat; // ok
+	sem_t			*forks; // ok
+	sem_t			*simulation_stop;
+	ms_t			start_time;
+}					data_t;
 
 typedef struct      philo_s
 {
 	int				id;
 	int				num_meals;
 	ms_t			last_meal;
-	pthread_mutex_t	meal_mutex;
-    pthread_mutex_t	*r_fork;
-    pthread_mutex_t	*l_fork;
 	data_t			*data;
 }                   philo_t;
 
-
-
-
-
-
-
-
-typedef struct      data_s
-{
-    int				num_ph;
-    ms_t			t_die;
-    ms_t			t_eat;
-    ms_t			t_sleep;
-    int				n_times_eat;
-    philo_t			*philosopher;
-	pthread_mutex_t	*forks;
-	pthread_mutex_t	display;
-	pthread_mutex_t	simulation_mutex;
-	bool			simulation;
-}					data_t;
-
 // fetch data from shared resource
-bool		simulation_is_stop(data_t *data);
-int			get_num_meals(philo_t *philo);
+// bool		simulation_is_stop(data_t *data);
+// int			get_num_meals(philo_t *philo);
 
 // utils
 ms_t		get_time(void);
-ms_t	ft_atoi_plus(const char *nptr);
+ms_t		ft_atoi_plus(const char *nptr);
 void		ft_putendl_fd(char *s, int fd);
 void		display(char *str, philo_t *philo);
 
@@ -73,18 +66,17 @@ void		display(char *str, philo_t *philo);
 void		eating(philo_t *philo);
 void		thinking(philo_t *philo);
 void		sleeping(philo_t *philo);
-void		use_left(philo_t *philo);
-void		use_right(philo_t *philo);
-void		*philosopher_life(void *arg);
-void		*single_philosopher(void *arg);
+void		philosopher_life(philo_t *philosopher_life);
+// void		*single_philosopher(void *arg);
 
 // main functions
-void		stop_simulation(data_t *data);
-ms_t		time_simulation(void);
-bool		is_die(philo_t *philo);
-void		observer(data_t	*data);
-void		allocate_initial(data_t *data);
-void		clean_all_resource(data_t *data, pthread_t **ids);
-void		handling_args(data_t *data, pthread_t **ph_ids, int ac, char **av);
+void		allocate_initial(philo_t **philosopher, data_t *data);
+void		handling_args(data_t *data, pid_t **pid, int ac, char **av);
+
+// void		stop_simulation(data_t *data);
+ms_t		time_simulation(data_t *data);
+// bool		is_die(philo_t *philo);
+// void		observer(data_t	*data);
+void		clean_all_resource(data_t *data, philo_t **philosopher, pid_t **pid);
 
 #endif

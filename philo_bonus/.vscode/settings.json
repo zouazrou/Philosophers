@@ -1,0 +1,8 @@
+{
+	"files.associations": {
+		"iomanip": "c",
+		"signal.h": "c",
+		"struct_timespec.h": "c",
+		"philosophers_bonus.h": "c"
+	}
+}
