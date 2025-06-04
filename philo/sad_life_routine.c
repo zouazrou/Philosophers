@@ -6,7 +6,7 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 11:37:01 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/05/30 23:25:24 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/04 11:50:36 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,12 @@ void	eating(philo_t *philo)
 	if (simulation_is_stop(philo->data) == true)
 		return ;
 	display("is eating", philo);
-	usleep(philo->data->t_eat * US);
+	// usleep(philo->data->t_eat * US);
 	pthread_mutex_lock(&philo->meal_mutex);
 	philo->last_meal = time_simulation();
 	philo->num_meals++;
 	pthread_mutex_unlock(&philo->meal_mutex);
+	usleep(philo->data->t_eat * US);
     return ;
 }
 
