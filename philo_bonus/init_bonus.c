@@ -6,7 +6,7 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:15:08 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/04 11:33:59 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/04 19:12:33 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,10 @@
 bool	open_semaphores(data_t *data)
 {
 	data->forks = sem_open(SEM_FORKS, O_CREAT, S_IRUSR | S_IWUSR, data->num_ph); // free
-	data->simulation_stop = sem_open(SEM_STOP, O_CREAT, S_IRUSR | S_IWUSR, 1); // free
 	data->kill = sem_open(SEM_KILL, O_CREAT, S_IRUSR | S_IWUSR, 0); // free
 	data->write = sem_open(SEM_WRITE, O_CREAT, S_IRUSR | S_IWUSR, 1);
-	if (data->forks == SEM_FAILED || data->simulation_stop  == SEM_FAILED
-		|| data->kill == SEM_FAILED)
+	data->philos_are_full = sem_open(SEM_PH_FULL, O_CREAT, S_IRUSR | S_IWUSR, 0);
+	if (data->forks == SEM_FAILED || data->kill == SEM_FAILED)
 		return(false); // free
 
 	return(true); // free
@@ -57,7 +56,6 @@ void	allocate_initial(philo_t **philosopher, data_t *data)
 
 	if (open_semaphores(data) == false)
 		exit((ft_putendl_fd("open_semaphores() fail\n", 2), 1));
-
 	while (++i < data->num_ph)
 	{
 		(*philosopher)[i].id = i + 1;

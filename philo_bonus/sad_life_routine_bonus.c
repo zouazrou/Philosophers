@@ -6,28 +6,27 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 11:37:01 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/04 12:14:07 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/04 22:53:16 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers_bonus.h"
 
+bool	valid_num_meals(philo_t *philosopher)
+{
+	if (philosopher->num_meals >= philosopher->data->n_times_eat)
+	{
+		sem_post(philosopher->data->philos_are_full);
+		return (true);
+	}
+	return (false);
+}
 
-/*
-edge case :
-*)t_sleep 0: (ODD NUM)
-	-> if we not sleep some MSs some philos
-	will wake up at the same time others put forks.
-	that will cause to die one of philos
-
-*/
 void	thinking(philo_t *philo)
 {
 	data_t	*data;
 
 	data = philo->data;
-	// if (simulation_is_stop(data) == true)
-		// return ;
 	display("is thinking", philo);
 	if (data->t_eat >= data->t_sleep)
 	{
@@ -55,8 +54,8 @@ void	eating(philo_t *philo)
 	display("has taken a fork", philo);
 	display("is eating", philo);
 	philo->last_meal = time_simulation(data);
-	usleep(philo->data->t_eat * US);
 	philo->num_meals++;
+	usleep(philo->data->t_eat * US);
 	sem_post(philo->data->forks);
 	sem_post(philo->data->forks);
     return ;
@@ -65,17 +64,19 @@ void	eating(philo_t *philo)
 void	*observer(void *arg)
 {
 	philo_t	*philo;
+	static	bool valid_meals = false;
 
 	philo = (philo_t *)arg;
 	while (1)
 	{
 		if (is_die(philo) == true)
-		{
 			break;
-		}
+		if (philo->data->n_times_eat != UNAVAILABLE && valid_meals == false)
+			valid_meals = valid_num_meals(philo);
 	}
 	return (NULL);
 }
+
 void	philosopher_life(philo_t *philosopher)
 {
 	pthread_t	th;
@@ -100,14 +101,5 @@ void	philosopher_life(philo_t *philosopher)
 
 void	single_philosopher(void)
 {
-	// philo_t	*philo;
-
-	// philo = (philo_t *)arg;
-	// pthread_mutex_lock(philo->r_fork);
-	// display("has taken a fork", philo);
-	// usleep(philo->data->t_die * US);
-	// pthread_mutex_unlock(philo->r_fork);
-	// stop_simulation(philo->data);
-	// display("died", philo);
-	// return (NULL);
+	
 }

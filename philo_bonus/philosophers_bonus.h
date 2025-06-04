@@ -6,7 +6,7 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:15:04 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/04 11:32:59 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/04 22:23:41 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@
 
 /*---Semaphore Names---*/
 #define	SEM_FORKS "/forks"
-#define	SEM_STOP  "/stop"
 #define	SEM_KILL  "/kill"
 #define	SEM_WRITE  "/write"
+#define	SEM_PH_FULL  "/philos_are_full"
 
 typedef long long ms_t;
 
@@ -44,23 +44,24 @@ typedef struct      data_s
 	ms_t			t_sleep; // ok
 	int				n_times_eat; // ok
 	sem_t			*forks; // ok
-	sem_t			*simulation_stop;
 	sem_t			*kill;
 	sem_t			*write;
+	sem_t			*philos_are_full;
 	ms_t			start_time;
 }					data_t;
 
 typedef struct      philo_s
 {
 	int				id;
-	int				num_meals;
-	ms_t			last_meal;
+	int				num_meals; // sh
+	ms_t			last_meal; // sh
 	data_t			*data;
 }                   philo_t;
 
 // fetch data from shared resource
 // bool		simulation_is_stop(data_t *data);
 // int			get_num_meals(philo_t *philo);
+bool	valid_num_meals(philo_t *philosopher);
 
 // utils
 ms_t		get_time(void);
@@ -84,5 +85,6 @@ ms_t		time_simulation(data_t *data);
 bool		is_die(philo_t *philo);
 // void		observer(data_t	*data);
 void		clean_all_resource(data_t *data, philo_t **philosopher, pid_t **pid);
+void		unlink_semaphore(void);
 
 #endif

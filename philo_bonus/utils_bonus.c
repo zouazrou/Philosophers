@@ -6,7 +6,7 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:15:28 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/04 11:32:36 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/04 22:23:43 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,13 @@ ms_t	time_simulation(data_t *data)
 	return (curr_time - data->start_time);
 }
 
+void	unlink_semaphore(void)
+{
+	sem_unlink(SEM_FORKS);
+	sem_unlink(SEM_KILL);
+	sem_unlink(SEM_WRITE);
+	sem_unlink(SEM_PH_FULL);
+}
 void	clean_all_resource(data_t *data, philo_t **philosopher, pid_t **pid)
 {
 	int	i;
@@ -68,8 +75,5 @@ void	clean_all_resource(data_t *data, philo_t **philosopher, pid_t **pid)
 	*philosopher = NULL;
 	sem_close(data->forks);
 	free(*pid);
-	sem_unlink(SEM_FORKS);
-	sem_unlink(SEM_STOP);
-	sem_unlink(SEM_KILL);
-	sem_unlink(SEM_WRITE);
+	unlink_semaphore();
 }
