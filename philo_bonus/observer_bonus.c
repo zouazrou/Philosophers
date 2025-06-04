@@ -6,7 +6,7 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:14:45 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/03 10:08:15 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/04 11:40:34 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,36 +18,28 @@ void	display(char *str, philo_t *philo)
 
 	data = philo->data;
 
-	// if (simulation_is_stop(data) == false)
-		printf("%lld %d %s\n", time_simulation(data), philo->id, str);
-	// else if (simulation_is_stop(data) == true && *str == 'd')
-	// 	printf("%lld %d %s\n", time_simulation(data), philo->id, str);
+	sem_wait(philo->data->write);
+	printf("%lld %d %s\n", time_simulation(data), philo->id, str);
+	if (*str != 'd')
+		sem_post(philo->data->write);
 }
-
-bool	time_is_up(philo_t *philo)
-{
-	// ms_t	curr;
-	bool	val = 1;
-
-	// curr = time_simulation();
-	// val = curr - philo->last_meal >= (philo->data->t_die);
-	return (val);
-}
-
 bool	is_die(philo_t *philo)
 {
-	// if (time_is_up(philo) == true)
-	// {
-	// 	stop_simulation(philo->data);
-	// 	display("died", philo);
-	// 	return (true);
-	// }
+	if (time_simulation(philo->data) - philo->last_meal >= philo->data->t_die)
+	{
+		// decremante semaphore to block any process try to printf()
+		sem_wait(philo->data->simulation_stop);
+		display("died", philo);
+		sem_post(philo->data->kill);
+		return (true);
+	}
 	return (false);
 }
 
 bool	valid_meals(philo_t *philo)
 {
-	int num_meals;
+	// int num_meals;
+	(void)philo;
 
 	// num_meals = get_num_meals(philo);
 	// if (philo->num_meals >= philo->data->n_times_eat)

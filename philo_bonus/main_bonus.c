@@ -6,12 +6,11 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:14:50 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/03 22:16:51 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/04 11:32:27 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers_bonus.h"
-#include <signal.h>
 
 /*
 idea[1] : Create thread (detached) from Child processes
@@ -28,6 +27,8 @@ int		main(int ac, char *av[])
 
 	sem_unlink(SEM_FORKS);
 	sem_unlink(SEM_STOP);
+	sem_unlink(SEM_KILL);
+	sem_unlink(SEM_WRITE);
 	handling_args(&data, &pid, ac, av);
 	allocate_initial(&philosopher, &data);
 
@@ -42,10 +43,11 @@ int		main(int ac, char *av[])
 		if (pid[i] == 0)
 			philosopher_life(philosopher + i);
 	}
-	sleep(2);
+	sem_wait(data.kill);
+	// sleep(2);
 	i = -1;
 	while (++i < data.num_ph)
-		kill(pid[i], SIGINT);
+		kill(pid[i], SIGKILL);
 	i = -1;
 	while (++i < data.num_ph)
 		waitpid(pid[i], NULL, 0);

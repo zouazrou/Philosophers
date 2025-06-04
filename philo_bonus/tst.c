@@ -16,14 +16,14 @@ sem_t	*sem_ptr;
 
 void	Child(int i)
 {
-	if (sem_wait(sem_ptr))
-		printf("fail");
+	int c = 1000;
+	while (c)
+	{
+		printf("____________________________________xxxxxxxxxxxxxxxxxxxxxxxxx");
+		printf("xxxxxxxxx\n");
+		usleep(1000000);
+	}
 
-	printf("from Procces NUM [%d]\n", i);
-	sleep(1);
-
-	if (sem_post(sem_ptr))
-		printf("fail");
 	exit(0);
 }
 
@@ -34,31 +34,30 @@ int 	main()
 
 	// create semaphore
 
-	printf("exit code [%d]\n", (0, 45));
 	// sem_ptr = sem_open(SEMA_NAME, O_CREAT, S_IRUSR | S_IWUSR, 2);
 	// if (sem_ptr == SEM_FAILED)
 	// 	printf("fail");
 
-	// // Create Child Process
-	// for (i = 0; i < NUM; i++)
-	// {
-	// 	pid[i] = fork();
-	// 	if (pid[i] == 0)
-	// 		break;
-	// }
-	// if (pid[i] == 0)
-	// {
-	// 	Child(i);
-	// }
+	// Create Child Process
+	for (i = 0; i < NUM; i++)
+	{
+		pid[i] = fork();
+		if (pid[i] == 0)
+			break;
+	}
+	if (pid[i] == 0)
+	{
+		Child(i);
+	}
 
-	// // Waiting
-	// if (pid[i])
-	// {
-	// 	for (i = 0; i < NUM; i++)
-	// 	{
-	// 		waitpid(pid[i], NULL, 0);
-	// 	}
-	// }
+	// Waiting
+	if (pid[i])
+	{
+		for (i = 0; i < NUM; i++)
+		{
+			waitpid(pid[i], NULL, 0);
+		}
+	}
 	// if (pid[i])
 	// 	sem_close(sem_ptr);
 	// if (sem_unlink(SEMA_NAME) == -1)

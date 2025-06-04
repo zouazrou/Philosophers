@@ -6,7 +6,7 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 11:37:01 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/03 10:06:20 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/04 12:14:07 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,6 @@ void	thinking(philo_t *philo)
 
 void	sleeping(philo_t *philo)
 {
-	// if (simulation_is_stop(philo->data) == true)
-		// return ;
 	display("is sleeping", philo);
 	usleep(philo->data->t_sleep * US);
 }
@@ -51,34 +49,42 @@ void	eating(philo_t *philo)
 	data_t	*data;
 
 	data = philo->data;
-	// if (simulation_is_stop(philo->data) == true)
-	// 	return ;
 	sem_wait(philo->data->forks);
+	display("has taken a fork", philo);
 	sem_wait(philo->data->forks);
+	display("has taken a fork", philo);
 	display("is eating", philo);
-	usleep(philo->data->t_eat * US);
 	philo->last_meal = time_simulation(data);
+	usleep(philo->data->t_eat * US);
 	philo->num_meals++;
 	sem_post(philo->data->forks);
 	sem_post(philo->data->forks);
     return ;
 }
 
-/*
-Idea 1: Once routine begin, Freeze odd/even Philosophers
-		to avoiding deadlock
-Idea 2: if (t_eat > t_sleep)
-*/
+void	*observer(void *arg)
+{
+	philo_t	*philo;
+
+	philo = (philo_t *)arg;
+	while (1)
+	{
+		if (is_die(philo) == true)
+		{
+			break;
+		}
+	}
+	return (NULL);
+}
 void	philosopher_life(philo_t *philosopher)
 {
-	data_t	*data;
-	int count = 10;
+	pthread_t	th;
 
-
-	data = philosopher->data;
+	pthread_create(&th, NULL, observer, philosopher);
+	pthread_detach(th);
 	if (!(philosopher->id % 2))
-		usleep(data->t_eat * US);
-	while (count--)
+		usleep(philosopher->data->t_eat * US);
+	while (true)
 	{
 		// Eating
 		eating(philosopher);
@@ -86,7 +92,7 @@ void	philosopher_life(philo_t *philosopher)
 		// Sleeping
 		sleeping(philosopher);
 
-		// thinking
+		// Thinking
 		thinking(philosopher);
 	}
 	exit (EXIT_SUCCESS);

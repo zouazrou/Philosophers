@@ -6,7 +6,7 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:15:04 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/03 22:12:44 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/04 11:32:59 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 #include <stdbool.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <pthread.h>
+#include <signal.h>
 
 #define	UNAVAILABLE -42
 #define	US 1000
@@ -29,6 +31,8 @@
 /*---Semaphore Names---*/
 #define	SEM_FORKS "/forks"
 #define	SEM_STOP  "/stop"
+#define	SEM_KILL  "/kill"
+#define	SEM_WRITE  "/write"
 
 typedef long long ms_t;
 
@@ -41,6 +45,8 @@ typedef struct      data_s
 	int				n_times_eat; // ok
 	sem_t			*forks; // ok
 	sem_t			*simulation_stop;
+	sem_t			*kill;
+	sem_t			*write;
 	ms_t			start_time;
 }					data_t;
 
@@ -75,7 +81,7 @@ void		handling_args(data_t *data, pid_t **pid, int ac, char **av);
 
 // void		stop_simulation(data_t *data);
 ms_t		time_simulation(data_t *data);
-// bool		is_die(philo_t *philo);
+bool		is_die(philo_t *philo);
 // void		observer(data_t	*data);
 void		clean_all_resource(data_t *data, philo_t **philosopher, pid_t **pid);
 
