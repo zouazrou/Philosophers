@@ -10,6 +10,14 @@
 		"span": "c",
 		"text_encoding": "c",
 		"thread": "c",
-		"philosophers.h": "c"
+		"philosophers.h": "c",
+		"string.h": "c",
+		"pthread.h": "c",
+		"ratio": "c",
+		"fcntl.h": "c",
+		"stat.h": "c",
+		"stdbool.h": "c",
+		"wait.h": "c",
+		"semaphore.h": "c"
 	}
 }
