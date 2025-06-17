@@ -33,6 +33,7 @@
 #define	SEM_KILL  "/kill"
 #define	SEM_WRITE  "/write"
 #define	SEM_PH_FULL  "/philos_are_full"
+#define	SEM_MEAL  "/meal_sem_"
 
 typedef long long ms_t;
 
@@ -55,6 +56,7 @@ typedef struct      philo_s
 	int				id;
 	int				num_meals; // sh
 	ms_t			last_meal; // sh
+	sem_t			*sem_meal;
 	data_t			*data;
 }                   philo_t;
 
@@ -68,6 +70,7 @@ ms_t		get_time(void);
 ms_t		ft_atoi_plus(const char *nptr);
 void		ft_putendl_fd(char *s, int fd);
 void		display(char *str, philo_t *philo);
+char		*generate_namesem(char *namesem, int   index);
 
 // routine
 void		eating(philo_t *philo);
@@ -79,12 +82,13 @@ void		philosopher_life(philo_t *philosopher_life);
 // main functions
 void		allocate_initial(philo_t **philosopher, data_t *data);
 void		handling_args(data_t *data, pid_t **pid, int ac, char **av);
+// char *generate_namesem(char *namesem, int index);
 
 // void		stop_simulation(data_t *data);
 ms_t		time_simulation(data_t *data);
 bool		is_die(philo_t *philo);
 // void		observer(data_t	*data);
-void		clean_all_resource(data_t *data, philo_t **philosopher, pid_t **pid);
-void		unlink_semaphore(void);
+void		clean_all_resource(data_t *data, philo_t **philosopher, pid_t **pid, int num_sem);
+void		unlink_semaphore(int num);
 
 #endif

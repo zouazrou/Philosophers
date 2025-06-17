@@ -47,7 +47,8 @@ void	handling_args(data_t *data, pid_t **pid, int ac, char **av)
 
 void	allocate_initial(philo_t **philosopher, data_t *data)
 {
-	int	i;
+	int		i;
+	char	*name_sem;
 
 	i = -1;
 	*philosopher = malloc(data->num_ph * sizeof(philo_t));
@@ -58,6 +59,12 @@ void	allocate_initial(philo_t **philosopher, data_t *data)
 		exit((ft_putendl_fd("open_semaphores() fail\n", 2), 1));
 	while (++i < data->num_ph)
 	{
+		name_sem = generate_namesem(SEM_MEAL, i);
+		sem_unlink(name_sem);
+		(*philosopher)[i].sem_meal = sem_open(name_sem, O_CREAT, S_IRUSR | S_IWUSR, 1);
+		free(name_sem);
+		if ((*philosopher)[i].sem_meal == SEM_FAILED)
+			exit((clean_all_resource(data, philosopher, NULL, i), EXIT_FAILURE));
 		(*philosopher)[i].id = i + 1;
 		(*philosopher)[i].data = data;
 		(*philosopher)[i].num_meals = 0;

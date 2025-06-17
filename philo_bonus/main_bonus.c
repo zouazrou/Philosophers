@@ -36,8 +36,8 @@ int		main(int ac, char *av[])
 	pid_t		*pid;
 	philo_t		*philosopher;
 
-	unlink_semaphore();
 	handling_args(&data, &pid, ac, av);
+	unlink_semaphore(data.num_ph);
 	allocate_initial(&philosopher, &data);
 
 	i = -1;
@@ -62,6 +62,6 @@ int		main(int ac, char *av[])
 	i = -1;
 	while (++i < data.num_ph)
 		waitpid(pid[i], NULL, 0);
-	clean_all_resource(&data, &philosopher, &pid);
+	clean_all_resource(&data, &philosopher, &pid, data.num_ph);
 	return (0);
 }

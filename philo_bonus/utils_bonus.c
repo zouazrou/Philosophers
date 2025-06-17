@@ -59,21 +59,35 @@ ms_t	time_simulation(data_t *data)
 	return (curr_time - data->start_time);
 }
 
-void	unlink_semaphore(void)
+void	unlink_semaphore(int num)
 {
+	int		i;
+	char	*name_sem;
+
 	sem_unlink(SEM_FORKS);
 	sem_unlink(SEM_KILL);
 	sem_unlink(SEM_WRITE);
 	sem_unlink(SEM_PH_FULL);
-}
-void	clean_all_resource(data_t *data, philo_t **philosopher, pid_t **pid)
-{
-	int	i;
-
 	i = -1;
+	while (++i < num)
+	{
+		name_sem = generate_namesem(SEM_MEAL, i);
+		if (!name_sem)
+			exit((ft_putendl_fd("error : generate_namesem()", 2), EXIT_FAILURE));
+		sem_unlink(name_sem);
+		free(name_sem);
+	}
+	
+}
+void	clean_all_resource(data_t *data, philo_t **philosopher, pid_t **pid, int num_sem)
+{
+	// int	i;
+
+	// i = -1;
+	unlink_semaphore(num_sem);
 	free(*philosopher);
 	*philosopher = NULL;
 	sem_close(data->forks);
-	free(*pid);
-	unlink_semaphore();
+	if (pid || *pid)
+		free(*pid);
 }
