@@ -6,29 +6,30 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:24:00 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/05/29 10:57:31 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/17 10:23:41 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Philosophers.h"
+#include "philosophers.h"
 
-bool	simulation_is_stop(data_t *data)
+bool	simulation_is_stop(t_data *data)
 {
 	bool	val;
+
 	pthread_mutex_lock(&data->simulation_mutex);
 	val = data->simulation;
 	pthread_mutex_unlock(&data->simulation_mutex);
 	return (val);
 }
 
-void	stop_simulation(data_t *data)
+void	stop_simulation(t_data *data)
 {
 	pthread_mutex_lock(&data->simulation_mutex);
-		data->simulation = true;
+	data->simulation = true;
 	pthread_mutex_unlock(&data->simulation_mutex);
 }
 
-int get_num_meals(philo_t *philo)
+int	get_num_meals(t_philo *philo)
 {
 	int	val;
 

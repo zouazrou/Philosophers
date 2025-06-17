@@ -6,11 +6,11 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 14:53:04 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/05/25 11:36:28 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/17 10:23:41 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Philosophers.h"
+#include "philosophers.h"
 
 void	ft_putstr_fd(char *s, int fd)
 {

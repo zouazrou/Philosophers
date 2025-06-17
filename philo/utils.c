@@ -6,57 +6,37 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:15:28 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/05/30 23:20:07 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/17 10:34:15 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Philosophers.h"
+#include "philosophers.h"
 
-int	ft_isdigit(int c)
+void	display(char *str, t_philo *philo)
 {
-	if (c >= '0' && c <= '9')
-		return (2048);
-	return (0);
+	t_data	*data;
+
+	data = philo->data;
+	pthread_mutex_lock(&data->display);
+	if (simulation_is_stop(data) == false)
+		printf("%lld %d %s\n", time_simulation(), philo->id, str);
+	else if (simulation_is_stop(data) == true && *str == 'd')
+		printf("%lld %d %s\n", time_simulation(), philo->id, str);
+	pthread_mutex_unlock(&data->display);
 }
 
-ms_t	ft_atoi_plus(const char *nptr)
-{
-	int	i;
-	int	nb;
-
-	i = 0;
-	nb = 0;
-	// while ((nptr[i] >= 9 && nptr[i] <= 13) || (nptr[i] == 32))
-	// 	i++;
-
-	if (nptr[i] == '+')
-		i++;
-	if (nptr[i] == '-')
-		exit((ft_putendl_fd("Error : time must be positive (-_-)", 2), 1));
-	while (nptr[i])
-	{
-		if (!ft_isdigit(nptr[i]))
-			exit((ft_putendl_fd("Error : argument must be digit", 2), 1));
-		nb = nb * 10 + nptr[i++] - '0';
-	}
-	return (nb);
-}
-
-/*
-READ F* MANUAL CHAPTER :ERRORS
-*/
-ms_t	get_time(void)
+t_ms	get_time(void)
 {
 	struct timeval	time;
 
 	gettimeofday(&time, NULL);
-	return ((ms_t)(time.tv_sec * 1000 + time.tv_usec / 1000));
+	return ((t_ms)(time.tv_sec * 1000 + time.tv_usec / 1000));
 }
 
-ms_t	time_simulation(void)
+t_ms	time_simulation(void)
 {
-	ms_t		curr_time;
-	static ms_t	start_time;
+	t_ms		curr_time;
+	static t_ms	start_time;
 
 	if (!start_time)
 	{
@@ -67,34 +47,41 @@ ms_t	time_simulation(void)
 	return (curr_time - start_time);
 }
 
-void	clean_all_resource(data_t *data, pthread_t **ids)
+void	garbage_collector(t_data *data)
+{
+	if (data->addrs[0])
+	{
+		free(data->addrs[0]);
+		data->addrs[0] = NULL;
+	}
+	if (data->addrs[1])
+	{
+		free(data->addrs[1]);
+		data->addrs[1] = NULL;
+	}
+	if (data->addrs[2])
+	{
+		free(data->addrs[2]);
+		data->addrs[2] = NULL;
+	}
+}
+
+void	clean_all_resource(t_data *data, t_err err)
 {
 	int	i;
 
-	// fprintf(stderr, "clean all resource\n");
-	// free array of id threads
-	if (*ids)
+	if (err == ARG || err == EDGE)
+		return ;
+	if (err != MALLOC)
 	{
-		free(*ids);
-		*ids = NULL;
+		pthread_mutex_destroy(&data->simulation_mutex);
+		pthread_mutex_destroy(&data->display);
+		i = -1;
+		while (++i < data->num_ph)
+		{
+			pthread_mutex_destroy(&data->forks[i]);
+			pthread_mutex_destroy(&data->philosopher[i].meal_mutex);
+		}
 	}
-	// destroy every mutex inside data_t struct and forks
-	pthread_mutex_destroy(&data->simulation_mutex);
-	pthread_mutex_destroy(&data->display);
-	i = -1;
-	while (++i < data->num_ph)
-	{
-		pthread_mutex_destroy(&data->forks[i]);
-		pthread_mutex_destroy(&data->philosopher[i].meal_mutex);
-	}
-	if (data->forks)
-	{
-		free(data->forks);
-		data->forks = NULL;
-	}
-	if (data->philosopher)
-	{
-		free(data->philosopher);
-		data->philosopher = NULL;
-	}
+	garbage_collector(data);
 }

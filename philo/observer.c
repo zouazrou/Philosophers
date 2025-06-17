@@ -6,29 +6,15 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:14:45 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/05/29 11:04:33 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/17 10:40:54 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Philosophers.h"
+#include "philosophers.h"
 
-void	display(char *str, philo_t *philo)
+bool	time_is_up(t_philo *philo)
 {
-	data_t		*data;
-
-	data = philo->data;
-
-	pthread_mutex_lock(&data->display);
-	if (simulation_is_stop(data) == false)
-		printf("%lld %d %s\n", time_simulation(), philo->id, str);
-	else if (simulation_is_stop(data) == true && *str == 'd')
-		printf("%lld %d %s\n", time_simulation(), philo->id, str);
-	pthread_mutex_unlock(&data->display);
-}
-
-bool	time_is_up(philo_t *philo)
-{
-	ms_t	curr;
+	t_ms	curr;
 	bool	val;
 
 	curr = time_simulation();
@@ -38,7 +24,7 @@ bool	time_is_up(philo_t *philo)
 	return (val);
 }
 
-bool	is_die(philo_t *philo)
+bool	is_die(t_philo *philo)
 {
 	if (time_is_up(philo) == true)
 	{
@@ -49,9 +35,9 @@ bool	is_die(philo_t *philo)
 	return (false);
 }
 
-bool	valid_meals(philo_t *philo)
+bool	valid_meals(t_philo *philo)
 {
-	int num_meals;
+	int	num_meals;
 
 	num_meals = get_num_meals(philo);
 	if (philo->num_meals >= philo->data->n_times_eat)
@@ -59,7 +45,7 @@ bool	valid_meals(philo_t *philo)
 	return (false);
 }
 
-void	observer(data_t	*data)
+void	observer(t_data *data)
 {
 	int		i;
 	bool	n_times;
@@ -72,7 +58,7 @@ void	observer(data_t	*data)
 		{
 			if (is_die(&data->philosopher[i]) == true)
 			{
-				break;
+				break ;
 			}
 			if (data->n_times_eat != UNAVAILABLE)
 			{
