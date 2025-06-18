@@ -6,104 +6,39 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:15:08 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/18 15:42:44 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/18 19:01:35 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers_bonus.h"
 
-void	init_semaphores(data_t *data)
+void	clean_all_resource(t_data *data, t_err err)
+{
+	kill_process(data);
+	close_semaphores(data);
+	unlink_semaphore(data);
+	if (data->philosopher)
+		free(data->philosopher);
+	data->philosopher = NULL;
+	if (data->pid)
+		free(data->pid);
+	data->pid = NULL;
+	if (err == ARG)
+		ft_putendl_fd("Error : Input", 2);
+	if (err == MALLOC)
+		ft_putendl_fd("Error : malloc", 2);
+	if (err == FORK)
+		ft_putendl_fd("Error : fork", 2);
+	if (err == SEM_OPEN)
+		ft_putendl_fd("Error : sem_open()", 2);
+}
+
+void	allocate_initial(t_data *data)
 {
 	int	i;
 
-	data->forks = SEM_FAILED;
-	data->kill = SEM_FAILED;
-	data->write = SEM_FAILED;
-	data->philos_done_eat = SEM_FAILED;
 	i = -1;
-	while (++i < data->num_ph)
-		data->philosopher[i].sem_meal = SEM_FAILED;
-}
-
-void	open_semaphores(data_t *data)
-{
-	int		i;
-	char	*name_sem;
-	/**********/
-	data->forks = sem_open(SEM_FORKS, O_CREAT, S_IRUSR | S_IWUSR, data->num_ph);
-	if (data->forks == SEM_FAILED)
-		exit((clean_all_resource(data, SEM_OPEN), EXIT_FAILURE));
-	/**********/
-	data->kill = sem_open(SEM_KILL, O_CREAT, S_IRUSR | S_IWUSR, 0);
-	if (data->forks == SEM_FAILED)
-		exit((clean_all_resource(data, SEM_OPEN), EXIT_FAILURE));
-	/**********/
-	data->write = sem_open(SEM_WRITE, O_CREAT, S_IRUSR | S_IWUSR, 1);
-	if (data->forks == SEM_FAILED)
-		exit((clean_all_resource(data, SEM_OPEN), EXIT_FAILURE));
-	/**********/
-	data->philos_done_eat = sem_open(SEM_PH_COUNT, O_CREAT, S_IRUSR | S_IWUSR, 0);
-	if (data->forks == SEM_FAILED)
-		exit((clean_all_resource(data, SEM_OPEN), EXIT_FAILURE));
-	/**********/
-	i = -1;
-	while (++i < data->num_ph)
-	{
-		name_sem = generate_namesem(i);
-		sem_unlink(name_sem);
-		data->philosopher[i].sem_meal = sem_open(name_sem, O_CREAT, S_IRUSR | S_IWUSR, 1);
-		free(name_sem);
-		if (data->philosopher[i].sem_meal == SEM_FAILED)
-			exit((clean_all_resource(data, SEM_OPEN), EXIT_FAILURE));
-	}
-}
-
-void	close_semaphores(data_t *data)
-{
-	int	i;
-
-	if (data->forks != SEM_FAILED)
-		sem_close(data->forks);
-	if (data->kill != SEM_FAILED)
-		sem_close(data->kill );
-	if (data->write != SEM_FAILED)
-		sem_close(data->write);
-	if (data->philos_done_eat != SEM_FAILED)
-		sem_close(data->philos_done_eat);
-	i = -1;
-	while (++i < data->num_ph)
-	{
-		if (data->philosopher[i].sem_meal != SEM_FAILED)
-			sem_close(data->philosopher[i].sem_meal);
-	}
-}
-
-void		unlink_semaphore(data_t *data)
-{
-	int		i;
-	char	*name_sem;
-
-	sem_unlink(SEM_FORKS);
-	sem_unlink(SEM_KILL);
-	sem_unlink(SEM_WRITE);
-	sem_unlink(SEM_PH_COUNT);
-	i = -1;
-	while (++i < data->num_ph)
-	{
-		name_sem = generate_namesem(i);
-		if (!name_sem)
-			exit((ft_putendl_fd("Error : malloc()", 2), EXIT_FAILURE));
-		sem_unlink(name_sem);
-		free(name_sem);
-	}
-}
-
-void	allocate_initial(data_t *data)
-{
-	int		i;
-
-	i = -1;
-	data->philosopher = malloc(data->num_ph * sizeof(philo_t));
+	data->philosopher = malloc(data->num_ph * sizeof(t_philo));
 	if (!data->philosopher)
 		exit((clean_all_resource(data, MALLOC), EXIT_FAILURE));
 	init_semaphores(data);
@@ -117,13 +52,13 @@ void	allocate_initial(data_t *data)
 	}
 }
 
-void	handling_args(data_t *data, int ac, char **av)
+void	handling_args(t_data *data, int ac, char **av)
 {
-    if (ac != 5 && ac != 6)
+	if (ac != 5 && ac != 6)
 	{
-        exit((ft_putendl_fd("Error : number of argments must 5 or 6", 2), 1));
+		exit((ft_putendl_fd("Error : number of argments must 5 or 6", 2), 1));
 	}
-	memset(data, 0, sizeof(data_t));
+	memset(data, 0, sizeof(t_data));
 	data->num_ph = ft_atoi_plus(av[1]);
 	data->t_die = ft_atoi_plus(av[2]);
 	data->t_eat = ft_atoi_plus(av[3]);
