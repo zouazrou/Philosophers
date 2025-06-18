@@ -6,7 +6,7 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:15:04 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/17 10:56:19 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/17 19:09:28 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ typedef enum e_err
 {
 	NO_ERR,
 	MALLOC,
-	METUX,
+	MUTEX,
 	ARG,
 	EDGE,
 }						t_err;
@@ -71,6 +71,7 @@ void					ft_putendl_fd(char *s, int fd);
 void					display(char *str, t_philo *philo);
 void					stop_simulation(t_data *data);
 t_ms					time_simulation(void);
+void					err_msg(t_err type);
 
 // routine functions
 void					use_right(t_philo *philo);
@@ -86,9 +87,9 @@ void					*single_philosopher(void *arg);
 // main functions
 bool					is_die(t_philo *philo);
 void					observer(t_data *data);
-int						allocate_initial(t_data *data);
+t_err					allocate_initial(t_data *data);
 void					clean_all_resource(t_data *data, t_err err);
-int						handling_args(t_data *data, pthread_t **ph_ids, int ac,
+t_err					handling_args(t_data *data, pthread_t **ph_ids, int ac,
 							char **av);
 
 #endif

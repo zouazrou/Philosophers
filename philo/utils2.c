@@ -6,11 +6,19 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 10:31:49 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/17 10:41:08 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/17 19:13:27 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+
+void	err_msg(t_err type)
+{
+	if (type == ARG)
+		ft_putendl_fd("Error : Input", 2);
+	if (type == MALLOC)
+		ft_putendl_fd("Error : malloc()", 2);
+}
 
 int	ft_isdigit(int c)
 {
@@ -31,11 +39,11 @@ t_ms	ft_atoi_plus(const char *nptr)
 	if (nptr[i] == '+')
 		i++;
 	if (nptr[i] == '-')
-		exit((ft_putendl_fd("Error : time must be positive (-_-)", 2), 1));
+		return (-1);
 	while (nptr[i])
 	{
 		if (!ft_isdigit(nptr[i]))
-			exit((ft_putendl_fd("Error : argument must be digit", 2), 1));
+			return (-1);
 		nb = nb * 10 + nptr[i++] - '0';
 	}
 	return (nb);

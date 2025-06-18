@@ -6,7 +6,7 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:15:28 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/17 10:34:15 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/17 18:56:27 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ void	clean_all_resource(t_data *data, t_err err)
 {
 	int	i;
 
+	err_msg(err);
 	if (err == ARG || err == EDGE)
 		return ;
 	if (err != MALLOC)
