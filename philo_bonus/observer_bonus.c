@@ -6,7 +6,7 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:14:45 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/04 22:53:02 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/18 15:33:15 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,11 @@ void	display(char *str, philo_t *philo)
 	if (*str != 'd')
 		sem_post(philo->data->write);
 }
+
 bool	is_die(philo_t *philo)
 {
-	if (time_simulation(philo->data) - philo->last_meal >= philo->data->t_die)
+
+	if (time_simulation(philo->data) - fetch_last_meal(philo) >= philo->data->t_die)
 	{
 		display("died", philo);
 		sem_post(philo->data->kill);

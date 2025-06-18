@@ -6,7 +6,7 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:15:28 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/04 22:23:43 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/18 13:29:56 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,35 +59,48 @@ ms_t	time_simulation(data_t *data)
 	return (curr_time - data->start_time);
 }
 
-void	unlink_semaphore(int num)
+void	kill_process(data_t *data)
 {
-	int		i;
-	char	*name_sem;
+	int	i;
 
-	sem_unlink(SEM_FORKS);
-	sem_unlink(SEM_KILL);
-	sem_unlink(SEM_WRITE);
-	sem_unlink(SEM_PH_FULL);
 	i = -1;
-	while (++i < num)
+	while (++i < data->num_ph)
 	{
-		name_sem = generate_namesem(SEM_MEAL, i);
-		if (!name_sem)
-			exit((ft_putendl_fd("error : generate_namesem()", 2), EXIT_FAILURE));
-		sem_unlink(name_sem);
-		free(name_sem);
+		if (data->pid[i] > 0)
+			kill(data->pid[i], SIGKILL);
 	}
-	
+	i = -1;
+	while (++i < data->num_ph)
+	{
+		if (data->pid[i] > 0)
+			waitpid(data->pid[i], NULL, 0);
+	}
 }
-void	clean_all_resource(data_t *data, philo_t **philosopher, pid_t **pid, int num_sem)
-{
-	// int	i;
 
-	// i = -1;
-	unlink_semaphore(num_sem);
-	free(*philosopher);
-	*philosopher = NULL;
-	sem_close(data->forks);
-	if (pid || *pid)
-		free(*pid);
+void	clean_all_resource(data_t *data, t_err err)
+{
+	/******kill******/
+	kill_process(data);
+	/******close sem******/
+	close_semaphores(data);
+	/******unlink sem*****/
+	unlink_semaphore(data);
+	// sem_close(data->forks);
+
+	/********free*********/
+	if (data->philosopher)
+		free(data->philosopher);
+	data->philosopher = NULL;
+	if (data->pid)
+		free(data->pid);
+	data->pid = NULL;
+	/******print msg error*****/
+	if (err == ARG)
+		ft_putendl_fd("Error : Input", 2);
+	if (err == MALLOC)
+		ft_putendl_fd("Error : malloc", 2);
+	if (err == FORK)
+		ft_putendl_fd("Error : fork", 2);
+	if (err == SEM_OPEN)
+		ft_putendl_fd("Error : sem_open()", 2);
 }

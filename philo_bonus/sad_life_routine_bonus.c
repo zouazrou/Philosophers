@@ -6,7 +6,7 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 11:37:01 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/04 22:53:16 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/18 15:35:13 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 bool	valid_num_meals(philo_t *philosopher)
 {
-	if (philosopher->num_meals >= philosopher->data->n_times_eat)
+	if (fetch_num_meals(philosopher) >= philosopher->data->n_times_eat)
 	{
-		sem_post(philosopher->data->philos_are_full);
+		sem_post(philosopher->data->philos_done_eat);
 		return (true);
 	}
 	return (false);
@@ -48,13 +48,16 @@ void	eating(philo_t *philo)
 	data_t	*data;
 
 	data = philo->data;
+	// take fork
 	sem_wait(philo->data->forks);
 	display("has taken a fork", philo);
 	sem_wait(philo->data->forks);
 	display("has taken a fork", philo);
 	display("is eating", philo);
+	sem_wait(philo->sem_meal);
 	philo->last_meal = time_simulation(data);
 	philo->num_meals++;
+	sem_post(philo->sem_meal);
 	usleep(philo->data->t_eat * US);
 	sem_post(philo->data->forks);
 	sem_post(philo->data->forks);
@@ -97,9 +100,4 @@ void	philosopher_life(philo_t *philosopher)
 		thinking(philosopher);
 	}
 	exit (EXIT_SUCCESS);
-}
-
-void	single_philosopher(void)
-{
-	
 }

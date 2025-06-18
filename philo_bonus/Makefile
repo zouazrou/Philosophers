@@ -3,10 +3,10 @@ CC = cc
 # -Wall -Wextra -Werror -fsanitize=thread
 # --read-var-info=yes : local variable, shows its name,
 #  declaration point, and in which frame (of the first call stack) it lives
-CFLAGS = -g -pthread -Wall -Wextra
+CFLAGS = -g -pthread -Wall -Wextra -Werror
 
 SRC = init_bonus.c main_bonus.c utils_bonus.c generate_namesem.c \
-		sad_life_routine_bonus.c ft_putendl_fd_bonus.c observer_bonus.c
+		sad_life_routine_bonus.c ft_putendl_fd_bonus.c observer_bonus.c conditions_bonus.c
 
 OBJ = $(SRC:.c=.o)
 

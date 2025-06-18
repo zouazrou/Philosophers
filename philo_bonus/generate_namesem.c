@@ -7,7 +7,7 @@ size_t  ft_strlen(const char *str)
     len = 0;
     while (str[len])
         len++;
-    return (len);    
+    return (len);
 }
 char	*ft_strdup(const char *s)
 {
@@ -108,7 +108,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (p);
 }
 
-char *generate_namesem(char *namesem, int index)
+char *generate_namesem(int index)
 {
     char *num;
     char *name;
@@ -116,21 +116,8 @@ char *generate_namesem(char *namesem, int index)
     num = ft_itoa(index);
     if (!num)
         return (num);
-    
-    name = ft_strjoin(namesem, num);
+
+    name = ft_strjoin(SEM_MEAL, num);
     free(num);
     return (name);
 }
-
-// int main()
-// {
-//     int s = 4;
-//     char *str;
-//     for (int i = 0; i < 1; i++)
-//     {
-//         str = generate_namesem(SEM_MEAL, i);
-//         printf("%s\n", str);
-//         if (str)
-//             free(str);
-//     }
-// }

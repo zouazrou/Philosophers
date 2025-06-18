@@ -6,13 +6,14 @@
 /*   By: zouazrou <zouazrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:15:04 by zouazrou          #+#    #+#             */
-/*   Updated: 2025/06/04 22:23:41 by zouazrou         ###   ########.fr       */
+/*   Updated: 2025/06/18 15:34:36 by zouazrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILOSOPHERS_BONUS_H
 # define PHILOSOPHERS_BONUS_H
 
+#include <string.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -32,10 +33,21 @@
 #define	SEM_FORKS "/forks"
 #define	SEM_KILL  "/kill"
 #define	SEM_WRITE  "/write"
-#define	SEM_PH_FULL  "/philos_are_full"
+#define	SEM_PH_COUNT  "/ph_count"
 #define	SEM_MEAL  "/meal_sem_"
 
 typedef long long ms_t;
+
+typedef enum e_err
+{
+	NO_ERR,
+	MALLOC,
+	FORK,
+	SEM_OPEN,
+	ARG,
+}	t_err;
+
+typedef	struct philo_s philo_t;
 
 typedef struct      data_s
 {
@@ -45,50 +57,51 @@ typedef struct      data_s
 	ms_t			t_sleep; // ok
 	int				n_times_eat; // ok
 	sem_t			*forks; // ok
-	sem_t			*kill;
-	sem_t			*write;
-	sem_t			*philos_are_full;
-	ms_t			start_time;
+	sem_t			*kill; // ok
+	sem_t			*write; // ok
+	sem_t			*philos_done_eat; // ok
+	ms_t			start_time; // ok
+	/*********/
+	philo_t			*philosopher; // malloc ok
+	pid_t			*pid;			// malloc ok
 }					data_t;
 
 typedef struct      philo_s
 {
-	int				id;
-	int				num_meals; // sh
-	ms_t			last_meal; // sh
-	sem_t			*sem_meal;
-	data_t			*data;
+	int				id; // ok
+	int				num_meals; // sh ok
+	ms_t			last_meal; // sh ok
+	sem_t			*sem_meal; // ok
+	data_t			*data; // ok
 }                   philo_t;
 
 // fetch data from shared resource
-// bool		simulation_is_stop(data_t *data);
-// int			get_num_meals(philo_t *philo);
-bool	valid_num_meals(philo_t *philosopher);
+bool	valid_num_meals(philo_t *philo);
+int		fetch_num_meals(philo_t *philo);
+ms_t	fetch_last_meal(philo_t *philo);
 
 // utils
 ms_t		get_time(void);
 ms_t		ft_atoi_plus(const char *nptr);
 void		ft_putendl_fd(char *s, int fd);
 void		display(char *str, philo_t *philo);
-char		*generate_namesem(char *namesem, int   index);
+char		*generate_namesem(int index);
 
 // routine
 void		eating(philo_t *philo);
 void		thinking(philo_t *philo);
 void		sleeping(philo_t *philo);
-void		philosopher_life(philo_t *philosopher_life);
-// void		*single_philosopher(void *arg);
+void		philosopher_life(philo_t *philo);
 
 // main functions
-void		allocate_initial(philo_t **philosopher, data_t *data);
-void		handling_args(data_t *data, pid_t **pid, int ac, char **av);
-// char *generate_namesem(char *namesem, int index);
+void		handling_args(data_t *data, int ac, char **av);
+void		allocate_initial(data_t *data);
+void		kill_process(data_t *data);
 
-// void		stop_simulation(data_t *data);
 ms_t		time_simulation(data_t *data);
 bool		is_die(philo_t *philo);
-// void		observer(data_t	*data);
-void		clean_all_resource(data_t *data, philo_t **philosopher, pid_t **pid, int num_sem);
-void		unlink_semaphore(int num);
+void		clean_all_resource(data_t *data, t_err err);
+void		unlink_semaphore(data_t *data);
+void	close_semaphores(data_t *data);
 
 #endif
